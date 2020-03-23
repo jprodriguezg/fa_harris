@@ -31,10 +31,15 @@ double total_time_for_add_ = 0.;
 ofstream outfile;
 
 // save text file
-bool saveText_ = false;
+bool saveText_ = false, setOnce = true;
 
-void EventMsgCallback(const dvs_msgs::EventArray::ConstPtr &event_msg) 
-{
+void EventMsgCallback(const dvs_msgs::EventArray::ConstPtr &event_msg) {
+
+    if(setOnce){
+        fa_harris_detector.setSensorParams(event_msg->width, event_msg->height);
+        setOnce = false;
+    }
+
     const int n_event = event_msg->events.size();
     if (n_event == 0) {return;}
 
@@ -62,8 +67,8 @@ void EventMsgCallback(const dvs_msgs::EventArray::ConstPtr &event_msg)
     const double time_per_event = elapsed_time/n_event; // Average time to process one event [ns/ev]
     const double event_rate = 1/(time_per_event*1e-3) ; // Average Event Rate [Million ev / s]
 
-    ROS_INFO(" FA-Harris. Percetange of corners: %.1f%%. Avg. timing: %0.0f ns/ev. Max event rate: %0.2f Mev/s",
-            percentage_corners, time_per_event, event_rate);
+    //ROS_INFO(" FA-Harris. Percetange of corners: %.1f%%. Avg. timing: %0.0f ns/ev. Max event rate: %0.2f Mev/s",
+    //        percentage_corners, time_per_event, event_rate);
 
     // global stats
     total_time_ += elapsed_time;
@@ -108,15 +113,15 @@ int main(int argc, char **argv)
 
     while (ros::ok()) {ros::spinOnce();} // Preferred over ros::spin() for performance
 
-    // print overall statistics
-    std::cout << "Global Statistics: " << std::endl
-    << " Total time [ns]: " << total_time_ << std::endl
-    << " Total number of events: " << total_events_ << std::endl
-    << " Total number of corners: " << total_corners_ << std::endl
-    << " Time/event [ns]: " << total_time_ / (double)total_events_ << std::endl
-    << " Events/s: " << total_events_ / total_time_ *  1e9  << std::endl
-    << " Reduction (%): " << (1.  - total_corners_  / (double)total_events_) * 100 << std::endl
-    << std::endl;
+    // // print overall statistics
+    // std::cout << "Global Statistics: " << std::endl
+    // << " Total time [ns]: " << total_time_ << std::endl
+    // << " Total number of events: " << total_events_ << std::endl
+    // << " Total number of corners: " << total_corners_ << std::endl
+    // << " Time/event [ns]: " << total_time_ / (double)total_events_ << std::endl
+    // << " Events/s: " << total_events_ / total_time_ *  1e9  << std::endl
+    // << " Reduction (%): " << (1.  - total_corners_  / (double)total_events_) * 100 << std::endl
+    // << std::endl;
 
     outfile.close();
     return 0;

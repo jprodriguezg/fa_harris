@@ -37,6 +37,8 @@ public:
     Eigen::MatrixXi getPatch();
 
     bool isFiltered(const dvs_msgs::Event &e);
+
+    void setSensorParams(int sensor_width, int sensor_height);
   
 private:
     ///////////////////
@@ -60,8 +62,8 @@ private:
 
     int window_size_;
     int kernel_size_;
-    static const int sensor_width_ = 346;
-    static const int sensor_height_ = 260;
+    int sensor_width_;
+    int sensor_height_;
     double harris_threshold_;
 
     // kernels

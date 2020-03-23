@@ -578,4 +578,16 @@ int FAHarrisDetector::pasc(int k, int n) const
     }
 }
 
+void FAHarrisDetector::setSensorParams(int sensor_width, int sensor_height){
+
+    // Initialize Surface of Active Events to 0-timestamp
+    sensor_width_ = sensor_width;
+    sensor_height_ = sensor_height;
+    sae_[0] = Eigen::MatrixXd::Zero(sensor_width_, sensor_height_);
+    sae_[1] = Eigen::MatrixXd::Zero(sensor_width_, sensor_height_);
+    sae_latest_[0] = Eigen::MatrixXd::Zero(sensor_width_, sensor_height_); //only for filter
+    sae_latest_[1] = Eigen::MatrixXd::Zero(sensor_width_, sensor_height_);
 }
+
+}
+
