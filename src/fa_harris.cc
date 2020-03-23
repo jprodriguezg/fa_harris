@@ -30,6 +30,9 @@ double total_time_for_add_ = 0.;
 // used to save corner info
 ofstream outfile;
 
+// save text file
+bool saveText_ = false;
+
 void EventMsgCallback(const dvs_msgs::EventArray::ConstPtr &event_msg) 
 {
     const int n_event = event_msg->events.size();
@@ -70,12 +73,14 @@ void EventMsgCallback(const dvs_msgs::EventArray::ConstPtr &event_msg)
     // Send detected corner events
     corner_pub.publish(corner_msg);
 
-    // save corner events to txt file
-    for (const auto& e : corner_msg.events)
-    {
-        outfile << e.x << " " << e.y << " " << e.ts << " ";
-        const int pol = e.polarity ? 1 : 0;
-        outfile << pol << "\n";
+    if(saveText_){
+        // save corner events to txt file
+        for (const auto& e : corner_msg.events)
+        {
+            outfile << e.x << " " << e.y << " " << e.ts << " ";
+            const int pol = e.polarity ? 1 : 0;
+            outfile << pol << "\n";
+        }
     }
 }
 
@@ -87,13 +92,15 @@ int main(int argc, char **argv)
     // load parameter
     string scene_;
     ros::param::param<string>("~scene", scene_, "shapes_6dof");
+    ros::param::param<bool>("~saveTextFile", saveText_, false);
 
-    outfile.open("/home/eric/EventCamera/evaluation/corner/" + scene_ + "/fa_harris.txt", ios::out);
-
-    if (!outfile.is_open())
-    {
-        ROS_INFO("Error opening file. ");
-        return 0;
+    if(saveText_){
+        outfile.open("/home/eric/EventCamera/evaluation/corner/" + scene_ + "/fa_harris.txt", ios::out);
+        if (!outfile.is_open())
+        {
+            ROS_INFO("Error opening file. ");
+            return 0;
+        }
     }
 
     corner_pub = nh.advertise<dvs_msgs::EventArray>("corners", 1);
