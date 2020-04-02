@@ -18,26 +18,54 @@ find_package(catkin REQUIRED COMPONENTS
 )
 
 catkin_package(
-  INCLUDE_DIRS 
-    ${catkin_INCLUDE_DIRS}
+  INCLUDE_DIRS include
+  LIBRARIES ${PROJECT_NAME}
+  CATKIN_DEPENDS roscpp
 )
 
 include_directories(
-  include/fa_harris/include
+  include
   ${catkin_INCLUDE_DIRS}
   ${EIGEN3_INCLUDE_DIRS}
   ${YAML_CPP_INCLUDE_DIR}
 )
-message("Opencv lib : ${OpenCV_INCLUDE_DIRS}")
-set(LIBS ${catkin_LIBRARIES} ${OpenCV_LIBRARIES} ${YAML_CPP_LIBRARIES})
 
-list(APPEND HEADER_FILES
-  include/fa_harris/include/fa_harris_detector.h
+# add_library(fa_harris_lib
+#   include/fa_harris/include/fa_harris_detector.h
+#   include/fa_harris/src/fa_harris_detector.cc
+# )
+
+# add_executable(fa_harris src/fa_harris.cc)
+# target_link_libraries(fa_harris fa_harris_lib)
+
+# message("Opencv lib : ${OpenCV_INCLUDE_DIRS}")
+# set(LIBS ${catkin_LIBRARIES} ${OpenCV_LIBRARIES} ${YAML_CPP_LIBRARIES})
+
+# list(APPEND HEADER_FILES
+#  include/fa_harris/include/fa_harris_detector.h
+# )
+
+# list(APPEND SOURCE_FILES
+#  include/fa_harris/src/fa_harris_detector.cc
+# )
+
+# add_executable(fa_harris ${SOURCE_FILES} src/fa_harris.cc)
+# target_link_libraries(fa_harris ${LIBS})
+
+add_library(${PROJECT_NAME}
+  src/fa_harris_detector.cc
 )
 
-list(APPEND SOURCE_FILES
-  include/fa_harris/src/fa_harris_detector.cc
-)
+add_executable(fa_harris_node src/fa_harris.cc)
+target_link_libraries(fa_harris_node ${PROJECT_NAME} ${catkin_LIBRARIES} ${OpenCV_LIBRARIES} ${YAML_CPP_LIBRARIES})
 
-add_executable(fa_harris ${SOURCE_FILES} src/fa_harris.cc)
-target_link_libraries(fa_harris ${LIBS})
+install(
+  TARGETS ${PROJECT_NAME}
+  ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+  LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+  RUNTIME DESTINATION ${CATKIN_GLOBAL_BIN_DESTINATION}
+)
+install(
+  DIRECTORY include/${PROJECT_NAME}/
+  DESTINATION ${CATKIN_PACKAGE_INCLUDE_DESTINATION}
+)

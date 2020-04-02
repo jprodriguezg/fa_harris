@@ -38,7 +38,8 @@ public:
 
     bool isFiltered(const dvs_msgs::Event &e);
 
-    void setSensorParams(int sensor_width, int sensor_height);
+    void setSensorParameters(int sensor_width, int sensor_height);
+    void resetSAEs();
   
 private:
     ///////////////////

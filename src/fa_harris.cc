@@ -12,7 +12,7 @@
 #include <chrono>
 #include <fstream>
 #include <cmath>
-#include "fa_harris_detector.h"
+#include "fa_harris/fa_harris_detector.h"
 
 using namespace std;
 
@@ -36,7 +36,7 @@ bool saveText_ = false, setOnce = true;
 void EventMsgCallback(const dvs_msgs::EventArray::ConstPtr &event_msg) {
 
     if(setOnce){
-        fa_harris_detector.setSensorParams(event_msg->width, event_msg->height);
+        fa_harris_detector.setSensorParameters(event_msg->width, event_msg->height);
         setOnce = false;
     }
 
